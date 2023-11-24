@@ -1,13 +1,12 @@
-import enum
 import pathlib
 import subprocess
-from msilib import sequence
-from typing import List, Optional, Sequence, Union
+from typing import List, Optional, Sequence, Tuple
+
+import nltk
 
 from polysem import THE_WORD
 
 from .meanings import *
-from .meaningsign import MEANING_SEQ_MAX_SIZE, MEANING_SINGS, MeaningSeq, MeaningSign
 
 
 def sentence_to_lemmas(sentence: str) -> Sequence[str]:
@@ -20,9 +19,22 @@ def sentence_to_lemmas(sentence: str) -> Sequence[str]:
     return proc.stdout.decode().replace("ё", "е").split()
 
 
-def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
-    print("Lemmas:", lemmas)
+def split_text_into_sentences(text: str) -> Sequence[str]:
+    return nltk.tokenize.sent_tokenize(text, language="russian")
 
+
+def text_to_lemma_seqs(text: str) -> Sequence[Tuple]:
+    result = []
+
+    for sent in split_text_into_sentences(text):
+        sent_lemmas = sentence_to_lemmas(sent)
+        if THE_WORD in sent_lemmas:
+            result.append((sent, sent_lemmas))
+
+    return result
+
+
+def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
     def get_meaning_sign_by_lemma(lemma: str) -> Optional[MeaningSign]:
         if type(lemma) != str or lemma.strip() == "":
             return None
@@ -95,8 +107,6 @@ def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
         real_place += 1
         seq_place += 1
     # endregion
-
-    print("Meanings sequence:", meaning_seq)
 
     return meaning_seq
 
