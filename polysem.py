@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 import sys
-from typing import Optional
 
-from polysem.logics import sentence_to_best_meaning
-from polysem.meanings import Meaning
+from polysem.logics import *
 
 MIN_PYTHON = (3, 8)
 
@@ -17,15 +15,17 @@ def main():
 
         while True:
             sentence = input("Sentence: ")
-            meaning: Optional[Meaning] = sentence_to_best_meaning(sentence)
+            meanings = get_seq_meanings(
+                lemmas_to_meaning_seq(sentence_to_lemmas(sentence))
+            )
 
-            if meaning == None:
+            if not meanings:
                 print("Couldn't estimate the meaning, please, try another sentence")
             else:
-                print("Meaning:", meaning.text)
-                print("Example:", meaning.example)
-
-            print()
+                for meaning, score in meanings:
+                    print(f"\nMeaning with score {score}:", meaning.text)
+                    print("Example:", meaning.example)
+                    print()
 
     else:
         raise NotImplementedError("Command-line args are not supported yet")

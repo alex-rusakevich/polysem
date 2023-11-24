@@ -1,6 +1,7 @@
 import enum
 import pathlib
 import subprocess
+from msilib import sequence
 from typing import List, Optional, Sequence, Union
 
 from polysem import THE_WORD
@@ -20,6 +21,8 @@ def sentence_to_lemmas(sentence: str) -> Sequence[str]:
 
 
 def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
+    print("Lemmas:", lemmas)
+
     def get_meaning_sign_by_lemma(lemma: str) -> Optional[MeaningSign]:
         if type(lemma) != str or lemma.strip() == "":
             return None
@@ -44,7 +47,23 @@ def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
     seq_place = 4
 
     while real_place >= 0 and seq_place >= 0:
-        meaning_seq[seq_place] = get_meaning_sign_by_lemma(lemmas[real_place])
+        potential_meaning = get_meaning_sign_by_lemma(lemmas[real_place])
+
+        if potential_meaning and potential_meaning.left_pos:
+            distance_from_word = word_place - real_place
+
+            if (
+                type(potential_meaning.left_pos) == int
+                and potential_meaning.left_pos == distance_from_word
+            ):
+                meaning_seq[seq_place] = potential_meaning
+            elif type(potential_meaning.left_pos) in (
+                list,
+                tuple,
+            ) and distance_from_word in range(
+                potential_meaning.left_pos[0], potential_meaning.left_pos[1] + 1
+            ):
+                meaning_seq[seq_place] = potential_meaning
 
         real_place -= 1
         seq_place -= 1
@@ -55,11 +74,29 @@ def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
     seq_place = 6
 
     while real_place < len(lemmas) and seq_place < MEANING_SEQ_MAX_SIZE:
-        meaning_seq[seq_place] = get_meaning_sign_by_lemma(lemmas[real_place])
+        potential_meaning = get_meaning_sign_by_lemma(lemmas[real_place])
+
+        if potential_meaning and potential_meaning.right_pos:
+            distance_from_word = real_place - word_place
+
+            if (
+                type(potential_meaning.right_pos) == int
+                and potential_meaning.right_pos == distance_from_word
+            ):
+                meaning_seq[seq_place] = potential_meaning
+            elif type(potential_meaning.right_pos) in (
+                list,
+                tuple,
+            ) and distance_from_word in range(
+                potential_meaning.right_pos[0], potential_meaning.right_pos[1] + 1
+            ):
+                meaning_seq[seq_place] = potential_meaning
 
         real_place += 1
         seq_place += 1
     # endregion
+
+    print("Meanings sequence:", meaning_seq)
 
     return meaning_seq
 
@@ -96,12 +133,3 @@ def get_seq_meanings(sequence: MeaningSeq) -> List:
             result.append((meaning, meaning_score))
 
     return result
-
-
-def sentence_to_best_meaning(sentence: str) -> Optional[Meaning]:
-    meanings = get_seq_meanings(lemmas_to_meaning_seq(sentence_to_lemmas(sentence)))
-
-    if len(meanings) == 0:
-        return None
-    else:
-        return meanings[0][0]
