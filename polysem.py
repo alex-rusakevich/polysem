@@ -21,7 +21,10 @@ def main():
         "The program was created by Alexander Rusakevich, 402/1, Chinese faculty (https://github.com/alex-rusakevich/polysem)"
     )
     the_yellow_word = Fore.YELLOW + "'" + THE_WORD + "'" + Style.RESET_ALL
-    print(f"The core word is {the_yellow_word}")
+    print(
+        f"The core word is {the_yellow_word}. The base has {Fore.GREEN}{len(MEANINGS)}{Style.RESET_ALL} meanings and \
+{Fore.GREEN}{len(MEANING_SINGS)}{Style.RESET_ALL} meaning signs"
+    )
 
     if len(sys.argv) == 1:  # REPL
         print("Press Ctrl-Z or Ctrl-C to stop")
@@ -59,7 +62,11 @@ def main():
                             + ":",
                             meaning.text,
                         )
-                        print("Example:", meaning.example)
+                        print(
+                            Fore.GREEN + "?>" + Style.RESET_ALL,
+                            "Example:",
+                            meaning.example,
+                        )
 
             print(Fore.GREEN + "\nDone.")
 
