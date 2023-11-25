@@ -1,1 +1,1 @@
-THE_WORD = "теплый"
+from . import settings

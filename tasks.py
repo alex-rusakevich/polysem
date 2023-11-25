@@ -14,7 +14,7 @@ def build(context, folder_mode=False):
 --name=polysem_tyoplyi \
 --noconfirm {"--onefile" if not folder_mode else ""} \
 --icon "./ui/icons/favicon.ico" \
---add-data "./polysem;polysem/" \
+--add-data "./data;./data/" \
 --add-data "./mystem.exe;." \
 "./polysem.py"'
     )

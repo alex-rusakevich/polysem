@@ -4,12 +4,12 @@ from typing import List, Optional, Sequence, Tuple
 
 import nltk
 
-from polysem import THE_WORD
+from polysem.settings import *
 
 from .meanings import *
 
 
-def sentence_to_lemmas(sentence: str) -> Sequence[str]:
+def sentence_to_stems(sentence: str) -> Sequence[str]:
     mystem_path = pathlib.Path(__file__).parent.parent.resolve() / "mystem.exe"
 
     proc = subprocess.run(
@@ -23,31 +23,31 @@ def split_text_into_sentences(text: str) -> Sequence[str]:
     return nltk.tokenize.sent_tokenize(text, language="russian")
 
 
-def text_to_lemma_seqs(text: str) -> Sequence[Tuple]:
+def text_to_stem_seqs(text: str) -> Sequence[Tuple]:
     result = []
 
     for sent in split_text_into_sentences(text):
-        sent_lemmas = sentence_to_lemmas(sent)
-        if THE_WORD in sent_lemmas:
-            result.append((sent, sent_lemmas))
+        sent_stems = sentence_to_stems(sent)
+        if THE_WORD in sent_stems:
+            result.append((sent, sent_stems))
 
     return result
 
 
-def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
-    def get_meaning_sign_by_lemma(lemma: str) -> Optional[MeaningSign]:
-        if type(lemma) != str or lemma.strip() == "":
+def stems_to_meaning_seq(stems: Sequence[str]) -> MeaningSeq:
+    def get_meaning_sign_by_stem(stem: str) -> Optional[MeaningSign]:
+        if type(stem) != str or stem.strip() == "":
             return None
 
         for meaning_sign in MEANING_SINGS:
-            if lemma == meaning_sign:
+            if stem == meaning_sign:
                 return meaning_sign
 
         return None
 
     meaning_seq: Sequence[Any] = [None for _ in range(MEANING_SEQ_MAX_SIZE)]
 
-    word_place = lemmas.index(THE_WORD)
+    word_place = stems.index(THE_WORD)
 
     if word_place == -1:
         raise Exception(f"Core word has not been found: '{THE_WORD}'")
@@ -59,7 +59,7 @@ def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
     seq_place = 4
 
     while real_place >= 0 and seq_place >= 0:
-        potential_meaning = get_meaning_sign_by_lemma(lemmas[real_place])
+        potential_meaning = get_meaning_sign_by_stem(stems[real_place])
 
         if potential_meaning and potential_meaning.left_pos:
             distance_from_word = word_place - real_place
@@ -85,8 +85,8 @@ def lemmas_to_meaning_seq(lemmas: Sequence[str]) -> MeaningSeq:
     real_place = word_place + 1
     seq_place = 6
 
-    while real_place < len(lemmas) and seq_place < MEANING_SEQ_MAX_SIZE:
-        potential_meaning = get_meaning_sign_by_lemma(lemmas[real_place])
+    while real_place < len(stems) and seq_place < MEANING_SEQ_MAX_SIZE:
+        potential_meaning = get_meaning_sign_by_stem(stems[real_place])
 
         if potential_meaning and potential_meaning.right_pos:
             distance_from_word = real_place - word_place

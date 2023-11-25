@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import sys
 
-from polysem import THE_WORD
 from polysem.logics import *
+from polysem.settings import *
 
 MIN_PYTHON = (3, 8)
 
@@ -18,22 +18,22 @@ def main():
         print("Press Ctrl-Z or Ctrl-C to stop")
 
         while True:
-            lemma_seqs = text_to_lemma_seqs(input("\nText: "))
+            stem_seqs = text_to_stem_seqs(input("\nText: "))
 
-            if lemma_seqs == []:
+            if stem_seqs == []:
                 print(f"No sentence with word '{THE_WORD}', skipping...")
                 continue
 
-            for orig_sent, sent_lemmas in lemma_seqs:
+            for orig_sent, sent_stems in stem_seqs:
                 print(f"\nProcessing sentence '{orig_sent}'...")
 
-                meanings = get_seq_meanings(lemmas_to_meaning_seq(sent_lemmas))
+                meanings = get_seq_meanings(stems_to_meaning_seq(sent_stems))
 
                 if not meanings:
                     print("Couldn't estimate the meaning, please, try another sentence")
                 else:
                     for meaning, score in meanings:
-                        print(f"\nMeaning with score {score}:", meaning.text)
+                        print(f"\n-> Meaning with score {score}:", meaning.text)
                         print("Example:", meaning.example)
 
             print("\nDone.")
