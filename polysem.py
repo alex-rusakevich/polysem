@@ -17,7 +17,9 @@ colorama.init(autoreset=True)
 
 
 def main():
-    print("The program was created by Alexander Rusakevich, 402/1, Chinese faculty")
+    print(
+        "The program was created by Alexander Rusakevich, 402/1, Chinese faculty (https://github.com/alex-rusakevich/polysem)"
+    )
     the_yellow_word = Fore.YELLOW + "'" + THE_WORD + "'" + Style.RESET_ALL
     print(f"The core word is {the_yellow_word}")
 
