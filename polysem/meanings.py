@@ -115,6 +115,28 @@ with open(
     mode="r",
     encoding="utf-8-sig",
 ) as w_file:
+
+    def position_to_obj(pos: str) -> Union[int, range, tuple]:
+        if re.match(r"[\[\(]\d+,\s*\d+[\]\)]", pos):
+            num1, num2 = re.findall(r"\d+", pos)
+            start_mod, end_mod = 0, 0
+
+            if pos[0] == "[":
+                start_mod = 0
+            elif pos[0] == "(":
+                start_mod = 1
+
+            if pos[-1] == "]":
+                end_mod = 1
+            elif pos[-1] == ")":
+                end_mod = 0
+
+            return range(int(num1) + start_mod, int(num2) + end_mod)
+        elif "," in pos:
+            return tuple(int(i) for i in pos.split(","))
+        else:
+            return int(pos)
+
     file_reader = csv.reader(w_file, delimiter=";", lineterminator="\r")
     next(file_reader)
 
@@ -123,18 +145,10 @@ with open(
         right_pos = None if arr[5].strip() in ("-", "") else arr[5]
 
         if left_pos:
-            if re.match(r"\[\d+,\s*\d+\]", left_pos):
-                num1, num2 = re.findall(r"\d+", left_pos)
-                left_pos = (int(num1), int(num2))
-            else:
-                left_pos = int(left_pos)
+            left_pos = position_to_obj(left_pos)
 
         if right_pos:
-            if re.match(r"\[\d+,\s*\d+\]", right_pos):
-                num1, num2 = re.findall(r"\d+", right_pos)
-                right_pos = (int(num1), int(num2))
-            else:
-                right_pos = int(right_pos)
+            right_pos = position_to_obj(right_pos)
 
         if not left_pos and not right_pos:
             continue

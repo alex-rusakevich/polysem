@@ -69,13 +69,11 @@ def stems_to_meaning_seq(stems: Sequence[str]) -> MeaningSeq:
                 and potential_meaning.left_pos == distance_from_word
             ):
                 meaning_seq[seq_place] = potential_meaning
-            elif type(potential_meaning.left_pos) in (
-                list,
-                tuple,
-            ) and distance_from_word in range(
-                potential_meaning.left_pos[0], potential_meaning.left_pos[1] + 1
-            ):
-                meaning_seq[seq_place] = potential_meaning
+            elif type(potential_meaning.left_pos) in (list, tuple, range):
+                for pos in potential_meaning.left_pos:
+                    if pos == distance_from_word:
+                        meaning_seq[seq_place] = potential_meaning
+                        break
 
         real_place -= 1
         seq_place -= 1
@@ -96,13 +94,11 @@ def stems_to_meaning_seq(stems: Sequence[str]) -> MeaningSeq:
                 and potential_meaning.right_pos == distance_from_word
             ):
                 meaning_seq[seq_place] = potential_meaning
-            elif type(potential_meaning.right_pos) in (
-                list,
-                tuple,
-            ) and distance_from_word in range(
-                potential_meaning.right_pos[0], potential_meaning.right_pos[1] + 1
-            ):
-                meaning_seq[seq_place] = potential_meaning
+            elif type(potential_meaning.right_pos) in (list, tuple, range):
+                for pos in potential_meaning.right_pos:
+                    if pos == distance_from_word:
+                        meaning_seq[seq_place] = potential_meaning
+                        break
 
         real_place += 1
         seq_place += 1
