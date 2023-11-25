@@ -14,7 +14,7 @@ def to_csv_array(obj: Any):
 class Meaning:
     instances: List = []
 
-    def __init__(self, meaning_id: int, text: str, example: str) -> None:
+    def __init__(self, meaning_id: str, text: str, example: str) -> None:
         self.__class__.instances.append(weakref.proxy(self))
         self.id = meaning_id
         self.text = text
@@ -92,48 +92,24 @@ MEANING_SEQ_SIDE = 5
 MEANING_SEQ_MAX_SIZE = 1 + MEANING_SEQ_SIDE * 2
 
 
-MEANING_1 = Meaning(
-    1,
-    "Имеющий температуру, сопоставимую с температурой человеческого тела; не очень горячий",
-    "Против ожидания, вечер был так тих и тёпел, что свечи на террасе и в столовой горели неподвижными огнями",
-)
-MEANING_2 = Meaning(
-    2,
-    "Отапливаемый, нагретый до комфортного уровня",
-    "Изменится ли угол α, если диск перенести из холодного помещения в теплое?",
-)
-MEANING_3 = Meaning(
-    3,
-    "Хорошо сохраняющий тепло, греющий",
-    "Как это ни странно, для серьезного нарушения кровообращения достаточно промокших ног и не слишком теплой шапки",
-)
-MEANING_4 = Meaning(
-    4,
-    "Дающий внутреннее ощущение теплоты, согревающий душу",
-    "Видимо, так происходит из-за теплого отношения автора к родному городу и его истории",
-)
-MEANING_5 = Meaning(
-    5,
-    "Доброжелательный, ласковый, участливый",
-    "Тёплый приём",
-)
+MEANINGS = []
+
+# region Loading meanings from file
+with open(
+    os.path.join(RESOURCE_PATH, "data", "meanings.csv"),
+    mode="r",
+    encoding="utf-8-sig",
+) as w_file:
+    file_reader = csv.reader(w_file, delimiter=";", lineterminator="\r")
+    next(file_reader)
+
+    for seq in file_reader:
+        MEANINGS.append(Meaning(seq[1], seq[2], seq[3]))
+# endregion
 
 MEANING_SINGS = []
 
-# region Write .csv
-# with open(
-#     os.path.join(RESOURCE_PATH, "data", "meaningsings.csv"), mode="w", encoding="utf-8-sig"
-# ) as w_file:
-#     file_writer = csv.writer(w_file, delimiter=";", lineterminator="\r")
-#     file_writer.writerow(
-#         ["Number", "Stem", "Semantics", "Meaning", "Left position", "Right position"]
-#     )
-
-#     for i, ms in enumerate(MEANING_SINGS):
-#         file_writer.writerow([i + 1, *to_csv_array(ms)])
-# endregion
-
-# region Load .csv
+# region Load meaning signs .csv
 with open(
     os.path.join(RESOURCE_PATH, "data", "meaningsings.csv"),
     mode="r",
@@ -166,7 +142,7 @@ with open(
         meaning = None
 
         for meaning_instance in Meaning.instances:
-            if meaning_instance.id == int(arr[3]):
+            if meaning_instance.id == arr[3]:
                 meaning = meaning_instance
 
         if not meaning:
