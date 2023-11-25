@@ -55,7 +55,11 @@ class MeaningSign:
         return False
 
     def __repr__(self):
-        return f"MeaningSign: {self.__dict__}"
+        dict_new = self.__dict__.copy()
+        if dict_new["meaning"]:
+            dict_new["meaning"] = str(dict_new["meaning"])
+
+        return f"MeaningSign: {dict_new}"
 
     def __str__(self):
         return self.__repr__()

@@ -104,6 +104,7 @@ def stems_to_meaning_seq(stems: Sequence[str]) -> MeaningSeq:
         seq_place += 1
     # endregion
 
+    print("\nMeaning sequence:", meaning_seq)
     return meaning_seq
 
 
