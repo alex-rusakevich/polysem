@@ -50,7 +50,7 @@ def main():
                     )
                     continue
                 else:
-                    for meaning, score in meanings:
+                    for i, (meaning, score) in enumerate(meanings):
                         print(
                             Fore.GREEN
                             + "\n-> "
@@ -59,6 +59,11 @@ def main():
                             + Fore.GREEN
                             + str(score)
                             + Style.RESET_ALL
+                            + (
+                                ""
+                                if i > 0
+                                else Fore.YELLOW + " (best)" + Style.RESET_ALL
+                            )
                             + ":",
                             meaning.text,
                         )
