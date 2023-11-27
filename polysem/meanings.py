@@ -138,6 +138,8 @@ with open(
             return range(int(num1) + start_mod, int(num2) + end_mod)
         elif "," in pos:
             return tuple(int(i) for i in pos.split(","))
+        elif pos.strip().lower() == "all":
+            return range(1, MEANING_SEQ_MAX_SIZE + 1)
         else:
             return int(pos)
 
