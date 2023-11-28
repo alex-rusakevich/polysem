@@ -3,4 +3,8 @@ import sys
 from pathlib import Path
 
 RESOURCE_PATH = Path(getattr(sys, "_MEIPASS", os.path.abspath(".")))
-THE_WORD = "теплый"
+
+with open(
+    os.path.join(RESOURCE_PATH, "data", "theword.txt"), "r", encoding="utf-8"
+) as f:
+    THE_WORD = f.read().strip()
