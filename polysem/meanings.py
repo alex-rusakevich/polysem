@@ -139,7 +139,7 @@ with open(
         elif "," in pos:
             return tuple(int(i) for i in pos.split(","))
         elif pos.strip().lower() == "all":
-            return range(1, MEANING_SEQ_MAX_SIZE + 1)
+            return range(1, MEANING_SEQ_SIDE + 1)
         else:
             return int(pos)
 
